@@ -81,6 +81,7 @@
 		closeOnEscape: false,
 		closeOnClick: false,
 		rtl: false,
+		wrapperTarget: 'body',
 		position: 'bottomRight', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter, center
 		target: '',
 		targetFirst: true,
@@ -117,29 +118,29 @@
 	 * Polyfill for remove() method
 	 */
 	if(!('remove' in Element.prototype)) {
-	    Element.prototype.remove = function() {
-	        if(this.parentNode) {
-	            this.parentNode.removeChild(this);
-	        }
-	    };
+		Element.prototype.remove = function() {
+			if(this.parentNode) {
+				this.parentNode.removeChild(this);
+			}
+		};
 	}
 
 	/*
-     * Polyfill for CustomEvent for IE >= 9
-     * https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
-     */
-    if(typeof window.CustomEvent !== 'function') {
-        var CustomEventPolyfill = function (event, params) {
-            params = params || { bubbles: false, cancelable: false, detail: undefined };
-            var evt = document.createEvent('CustomEvent');
-            evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-            return evt;
-        };
+	 * Polyfill for CustomEvent for IE >= 9
+	 * https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
+	 */
+	if(typeof window.CustomEvent !== 'function') {
+		var CustomEventPolyfill = function (event, params) {
+			params = params || { bubbles: false, cancelable: false, detail: undefined };
+			var evt = document.createEvent('CustomEvent');
+			evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+			return evt;
+		};
 
-        CustomEventPolyfill.prototype = window.Event.prototype;
+		CustomEventPolyfill.prototype = window.Event.prototype;
 
-        window.CustomEvent = CustomEventPolyfill;
-    }
+		window.CustomEvent = CustomEventPolyfill;
+	}
 
 	/**
 	 * A simple forEach() implementation for Arrays, Objects and NodeLists
@@ -216,11 +217,11 @@
 	 * @private
 	 */
 	var isBase64 = function(str) {
-	    try {
-	        return btoa(atob(str)) == str;
-	    } catch (err) {
-	        return false;
-	    }
+		try {
+			return btoa(atob(str)) == str;
+		} catch (err) {
+			return false;
+		}
 	};
 
 
@@ -229,31 +230,31 @@
 	 * @private
 	 */
 	var drag = function() {
-	    
-	    return {
-	        move: function(toast, instance, settings, xpos) {
+		
+		return {
+			move: function(toast, instance, settings, xpos) {
 
-	        	var opacity,
-	        		opacityRange = 0.3,
-	        		distance = 180;
-	            
-	            if(xpos !== 0){
-	            	
-	            	toast.classList.add(PLUGIN_NAME+'-dragged');
+				var opacity,
+					opacityRange = 0.3,
+					distance = 180;
+				
+				if(xpos !== 0){
+					
+					toast.classList.add(PLUGIN_NAME+'-dragged');
 
-	            	toast.style.transform = 'translateX('+xpos + 'px)';
+					toast.style.transform = 'translateX('+xpos + 'px)';
 
-		            if(xpos > 0){
-		            	opacity = (distance-xpos) / distance;
-		            	if(opacity < opacityRange){
+					if(xpos > 0){
+						opacity = (distance-xpos) / distance;
+						if(opacity < opacityRange){
 							instance.hide(extend(settings, { transitionOut: 'fadeOutRight', transitionOutMobile: 'fadeOutRight' }), toast, 'drag');
 						}
-		            } else {
-		            	opacity = (distance+xpos) / distance;
-		            	if(opacity < opacityRange){
+					} else {
+						opacity = (distance+xpos) / distance;
+						if(opacity < opacityRange){
 							instance.hide(extend(settings, { transitionOut: 'fadeOutLeft', transitionOutMobile: 'fadeOutLeft' }), toast, 'drag');
 						}
-		            }
+					}
 					toast.style.opacity = opacity;
 			
 					if(opacity < opacityRange){
@@ -263,66 +264,66 @@
 
 						toast.parentNode.style.opacity = opacityRange;
 
-		                this.stopMoving(toast, null);
+						this.stopMoving(toast, null);
 					}
-	            }
+				}
 
 				
-	        },
-	        startMoving: function(toast, instance, settings, e) {
+			},
+			startMoving: function(toast, instance, settings, e) {
 
-	            e = e || window.event;
-	            var posX = ((ACCEPTSTOUCH) ? e.touches[0].clientX : e.clientX),
-	                toastLeft = toast.style.transform.replace('px)', '');
-	                toastLeft = toastLeft.replace('translateX(', '');
-	            var offsetX = posX - toastLeft;
+				e = e || window.event;
+				var posX = ((ACCEPTSTOUCH) ? e.touches[0].clientX : e.clientX),
+					toastLeft = toast.style.transform.replace('px)', '');
+					toastLeft = toastLeft.replace('translateX(', '');
+				var offsetX = posX - toastLeft;
 
 				toast.classList.remove(settings.transitionIn);
 				toast.classList.remove(settings.transitionInMobile);
 				toast.style.transition = '';
 
-	            if(ACCEPTSTOUCH) {
-	                document.ontouchmove = function(e) {
-	                    e.preventDefault();
-	                    e = e || window.event;
-	                    var posX = e.touches[0].clientX,
-	                        finalX = posX - offsetX;
-                        drag.move(toast, instance, settings, finalX);
-	                };
-	            } else {
-	                document.onmousemove = function(e) {
-	                    e.preventDefault();
-	                    e = e || window.event;
-	                    var posX = e.clientX,
-	                        finalX = posX - offsetX;
-                        drag.move(toast, instance, settings, finalX);
-	                };
-	            }
+				if(ACCEPTSTOUCH) {
+					document.ontouchmove = function(e) {
+						e.preventDefault();
+						e = e || window.event;
+						var posX = e.touches[0].clientX,
+							finalX = posX - offsetX;
+						drag.move(toast, instance, settings, finalX);
+					};
+				} else {
+					document.onmousemove = function(e) {
+						e.preventDefault();
+						e = e || window.event;
+						var posX = e.clientX,
+							finalX = posX - offsetX;
+						drag.move(toast, instance, settings, finalX);
+					};
+				}
 
-	        },
-	        stopMoving: function(toast, e) {
+			},
+			stopMoving: function(toast, e) {
 
-	            if(ACCEPTSTOUCH) {
-	                document.ontouchmove = function() {};
-	            } else {
-	            	document.onmousemove = function() {};
-	            }
+				if(ACCEPTSTOUCH) {
+					document.ontouchmove = function() {};
+				} else {
+					document.onmousemove = function() {};
+				}
 
 				toast.style.opacity = '';
 				toast.style.transform = '';
 
-	            if(toast.classList.contains(PLUGIN_NAME+'-dragged')){
-	            	
-	            	toast.classList.remove(PLUGIN_NAME+'-dragged');
+				if(toast.classList.contains(PLUGIN_NAME+'-dragged')){
+					
+					toast.classList.remove(PLUGIN_NAME+'-dragged');
 
 					toast.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
 					setTimeout(function() {
 						toast.style.transition = '';
 					}, 400);
-	            }
+				}
 
-	        }
-	    };
+			}
+		};
 
 	}();
 
@@ -414,20 +415,20 @@
 			settings = extend(this.children[ref], options || {}),
 			$elem = $toast.querySelector('.'+PLUGIN_NAME+'-progressbar div');
 
-	    return {
-	        start: function() {
+		return {
+			start: function() {
 
-	        	if(typeof settings.time.REMAINING == 'undefined'){
+				if(typeof settings.time.REMAINING == 'undefined'){
 
-	        		$toast.classList.remove(PLUGIN_NAME+'-reseted');
+					$toast.classList.remove(PLUGIN_NAME+'-reseted');
 
-		        	if($elem !== null){
+					if($elem !== null){
 						$elem.style.transition = 'width '+ settings.timeout +'ms '+settings.progressBarEasing;
 						$elem.style.width = '0%';
 					}
 
-		        	settings.time.START = new Date().getTime();
-		        	settings.time.END = settings.time.START + settings.timeout;
+					settings.time.START = new Date().getTime();
+					settings.time.END = settings.time.START + settings.timeout;
 					settings.time.TIMER = setTimeout(function() {
 
 						clearTimeout(settings.time.TIMER);
@@ -442,14 +443,14 @@
 						}
 
 					}, settings.timeout);			
-		        	that.setSetting(ref, 'time', settings.time);
-	        	}
-	        },
-	        pause: function() {
+					that.setSetting(ref, 'time', settings.time);
+				}
+			},
+			pause: function() {
 
-	        	if(typeof settings.time.START !== 'undefined' && !$toast.classList.contains(PLUGIN_NAME+'-paused') && !$toast.classList.contains(PLUGIN_NAME+'-reseted')){
+				if(typeof settings.time.START !== 'undefined' && !$toast.classList.contains(PLUGIN_NAME+'-paused') && !$toast.classList.contains(PLUGIN_NAME+'-reseted')){
 
-        			$toast.classList.add(PLUGIN_NAME+'-paused');
+					$toast.classList.add(PLUGIN_NAME+'-paused');
 
 					settings.time.REMAINING = settings.time.END - new Date().getTime();
 
@@ -470,20 +471,20 @@
 							callback.apply(that);						
 						}, 10);
 					}
-        		}
-	        },
-	        resume: function() {
+				}
+			},
+			resume: function() {
 
 				if(typeof settings.time.REMAINING !== 'undefined'){
 
 					$toast.classList.remove(PLUGIN_NAME+'-paused');
 
-		        	if($elem !== null){
+					if($elem !== null){
 						$elem.style.transition = 'width '+ settings.time.REMAINING +'ms '+settings.progressBarEasing;
 						$elem.style.width = '0%';
 					}
 
-		        	settings.time.END = new Date().getTime() + settings.time.REMAINING;
+					settings.time.END = new Date().getTime() + settings.time.REMAINING;
 					settings.time.TIMER = setTimeout(function() {
 
 						clearTimeout(settings.time.TIMER);
@@ -504,8 +505,8 @@
 				} else {
 					this.start();
 				}
-	        },
-	        reset: function(){
+			},
+			reset: function(){
 
 				clearTimeout(settings.time.TIMER);
 
@@ -527,8 +528,8 @@
 						callback.apply(that);						
 					}, 10);
 				}
-	        }
-	    };
+			}
+		};
 
 	};
 
@@ -668,12 +669,23 @@
 			cover: document.createElement('div'),
 			buttons: document.createElement('div'),
 			inputs: document.createElement('div'),
-			wrapper: null
+			wrapper: null,
+			wrapperTarget: null
 		};
 
 		$DOM.toast.setAttribute('data-iziToast-ref', settings.ref);
 		$DOM.toast.appendChild($DOM.toastBody);
 		$DOM.toastCapsule.appendChild($DOM.toast);
+
+		// Define wrapper target
+		(function(){
+			var target = document.querySelector(settings.wrapperTarget);
+			if(target) {
+				$DOM.wrapperTarget = target;
+			} else {
+				$DOM.wrapperTarget = document.querySelector('body');
+			}
+		})();
 
 		// CSS Settings
 		(function(){
@@ -1053,7 +1065,7 @@
 					$DOM.wrapper = document.createElement('div');
 					$DOM.wrapper.classList.add(PLUGIN_NAME + '-wrapper');
 					$DOM.wrapper.classList.add(position);
-					document.body.appendChild($DOM.wrapper);
+					$DOM.wrapperTarget.appendChild($DOM.wrapper);
 				}
 				if(settings.position == 'topLeft' || settings.position == 'topCenter' || settings.position == 'topRight'){
 					$DOM.wrapper.insertBefore($DOM.toastCapsule, $DOM.wrapper.firstChild);
@@ -1092,7 +1104,7 @@
 					if(!isNaN(settings.zindex) && settings.zindex !== null) {
 						$DOM.overlay.style.zIndex = settings.zindex-1;
 					}
-					document.querySelector('body').appendChild($DOM.overlay);
+					$DOM.wrapperTarget.appendChild($DOM.overlay);
 				}
 
 				if(settings.overlayClose) {
@@ -1194,24 +1206,24 @@
 
 			if(ACCEPTSTOUCH) {
 
-			    $DOM.toast.addEventListener('touchstart', function(e) {
-			        drag.startMoving(this, that, settings, e);
-			    }, false);
+				$DOM.toast.addEventListener('touchstart', function(e) {
+					drag.startMoving(this, that, settings, e);
+				}, false);
 
-			    $DOM.toast.addEventListener('touchend', function(e) {
-			        drag.stopMoving(this, e);
-			    }, false);
+				$DOM.toast.addEventListener('touchend', function(e) {
+					drag.stopMoving(this, e);
+				}, false);
 			} else {
 
-			    $DOM.toast.addEventListener('mousedown', function(e) {
-			    	e.preventDefault();
-			        drag.startMoving(this, that, settings, e);
-			    }, false);
+				$DOM.toast.addEventListener('mousedown', function(e) {
+					e.preventDefault();
+					drag.startMoving(this, that, settings, e);
+				}, false);
 
-			    $DOM.toast.addEventListener('mouseup', function(e) {
-			    	e.preventDefault();
-			        drag.stopMoving(this, e);
-			    }, false);
+				$DOM.toast.addEventListener('mouseup', function(e) {
+					e.preventDefault();
+					drag.stopMoving(this, e);
+				}, false);
 			}
 		}
 
@@ -1220,7 +1232,7 @@
 			document.addEventListener('keyup', function (evt) {
 				evt = evt || window.event;
 				if(evt.keyCode == 27) {
-				    that.hide(settings, $DOM.toast, 'esc');
+					that.hide(settings, $DOM.toast, 'esc');
 				}
 			});
 		}
@@ -1231,7 +1243,7 @@
 			});
 		}
 
-		that.toast = $DOM.toast;		
+		that.toast = $DOM.toast;
 	};
 	
 

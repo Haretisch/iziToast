@@ -123,6 +123,11 @@ interface IziToastSettings {
      */
     rtl?: boolean;
     /**
+     * If you want another element than the body to hold the toasts, but still want the ability to position them. If the element is not found body will be used instead.
+     * Default value: body
+     */
+     wrapperTarget?: string
+    /**
      * Where it will be shown. 
      * Default value: bottomRight
      */
